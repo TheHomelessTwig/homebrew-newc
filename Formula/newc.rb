@@ -1,8 +1,8 @@
 class Newc < Formula
   desc "GUI-driven C project scaffolding and management tool"
   homepage "https://github.com/TheHomelessTwig/newc-rs"
-  url "https://github.com/TheHomelessTwig/newc-rs/archive/refs/tags/v1.0.0.tar.gz"
-  sha256 "ca8a2e20752e4308650dd1164f255f5c4555bfc76822606f637570a361975d90"
+  url "https://github.com/TheHomelessTwig/newc-rs/archive/refs/tags/v1.0.1.tar.gz"
+  sha256 "3b8290f9dbabbe40e7a9c80fb5fe9705d065ba82b39f019e20708938b6156e17"
   license "MIT"
   head "https://github.com/TheHomelessTwig/newc-rs.git", branch: "main"
 
