@@ -1,8 +1,8 @@
 class Newc < Formula
   desc "GUI-driven C project scaffolding and management tool"
   homepage "https://github.com/TheHomelessTwig/newc-rs"
-  url "https://github.com/TheHomelessTwig/newc-rs/archive/refs/tags/v1.0.1.tar.gz"
-  sha256 "3b8290f9dbabbe40e7a9c80fb5fe9705d065ba82b39f019e20708938b6156e17"
+  url "https://github.com/TheHomelessTwig/newc-rs/archive/refs/tags/v1.0.2.tar.gz"
+  sha256 "73fc3734e070dcf8b12c81027a960f35e56fdae71196802916d2a3429f817ae7"
   license "MIT"
   head "https://github.com/TheHomelessTwig/newc-rs.git", branch: "main"
 
@@ -21,22 +21,32 @@ class Newc < Formula
     cp buildpath/"packaging/Info.plist", app/"Contents/Info.plist"
     ln_sf bin/"newc", app/"Contents/MacOS/newc"
 
-    icon_svg = buildpath/"packaging/newc.svg"
-    icns = generate_icns(icon_svg)
-    cp icns, app/"Contents/Resources/newc.icns" if icns
+    icon_png = buildpath/"packaging/newc.png"
+    icns = generate_icns(icon_png)
+    if icns
+      cp icns, app/"Contents/Resources/newc.icns"
+    else
+      opoo "newc.app installed without an icon (icon generation failed — see above)."
+    end
   end
 
-  # Render packaging/newc.svg to a .icns using only stock macOS tools
-  # (qlmanage for SVG rasterisation, sips to resize, iconutil to pack).
-  # Returns the path to the generated .icns, or nil if any step is unavailable.
-  def generate_icns(svg)
-    return nil unless which("qlmanage") && which("iconutil") && svg.exist?
+  # Render the pre-rendered packaging/newc.png (1024x1024) to a .icns using
+  # only `sips` (resize) and `iconutil` (pack) — no `qlmanage`, since SVG
+  # rasterisation via qlmanage needs a WindowServer connection that isn't
+  # available inside Homebrew's sandboxed install environment (it exits 0
+  # but silently produces no thumbnail there).
+  # Returns the path to the generated .icns, or nil if any step fails.
+  def generate_icns(png)
+    unless which("sips") && which("iconutil")
+      opoo "sips/iconutil not found — skipping icon generation."
+      return nil
+    end
+    unless png.exist?
+      opoo "#{png} not found — skipping icon generation."
+      return nil
+    end
 
     Dir.mktmpdir do |tmp|
-      system "qlmanage", "-t", "-s", "1024", "-o", tmp, svg.to_s
-      png = Pathname.new(tmp)/"newc.svg.png"
-      return nil unless png.exist?
-
       iconset = Pathname.new(tmp)/"newc.iconset"
       iconset.mkpath
       [16, 32, 64, 128, 256, 512, 1024].each do |sz|
