@@ -1,6 +1,6 @@
 cask "newc" do
-  version "0.0.0"
-  sha256 "0000000000000000000000000000000000000000000000000000000000000"
+  version "1.0.3"
+  sha256 "27ad56263cda30138ef8441112838bb9d49e3b3da6777cd0f829cfbd933f50b2"
 
   url "https://github.com/TheHomelessTwig/newc-rs/releases/download/v#{version}/newc-aarch64-macos.app.zip"
   name "newc"
